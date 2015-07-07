@@ -25,8 +25,6 @@ peer.on('connection', function (playerconnection, name) {
     renderConnectedTo(playerconnection.peer);
 
     playerconnection.on('data', function (data) {
-      console.log(data);
-      renderData(data, 'them');
       renderMove(data, 'them');
     });
   });
@@ -76,35 +74,6 @@ joinHostButton.addEventListener('click', function () {
   document.getElementById('join').classList.toggle('hide');
 });
 
-function renderData(data, who) {
-
-  // building out all the elements and rendering to page
-  // let messageWrapper = document.createElement('div');
-  // messageWrapper.classList.add('chat','message-wrapper',who);
-  //
-  // let messagePerson = document.createElement('div');
-  // messagePerson.classList.add('name','circle-wrapper','animated','bounceIn');
-  //
-  // let personName = document.createTextNode(data.name.charAt(0));
-  // messagePerson.appendChild(personName);
-  //
-  // let messageDiv = document.createElement('div');
-  // messageDiv.classList.add('message','text-wrapper');
-  //
-  // let messageContent = document.createTextNode(data.message);
-  // messageDiv.appendChild(messageContent);
-  //
-  // messageWrapper.appendChild(messagePerson);
-  // messageWrapper.appendChild(messageDiv);
-  //
-  // chatOutputEl.appendChild(messageWrapper);
-
-  if (who === 'them' && document.getElementById('friendID').innerHTML !== data.name) {
-    renderConnectedTo(data.name);
-  }
-  console.log(data, who);
-}
-
 for (var i = 0, ii = gameTile.length; i < ii; i++) {
   gameTile[i].addEventListener('click', function (e) {
     console.log(e.target.id);
@@ -126,13 +95,41 @@ function sendMove(tile) {
     'name': name
   };
   playerconnection.send(data);
+  if (gameWin(makeArray(document.getElementsByClassName('x')))) {
+    alert('you won');
+  };
 }
 
 function renderMove(data) {
+  if (document.getElementById('friendID').innerHTML !== data.name) {
+    renderConnectedTo(data.name);
+  }
   var tileEl = document.getElementById(data.move);
   tileEl.classList.add('o');
   tileEl.classList.add('disabled');
   game.classList.remove('disabled');
+  if (gameWin(makeArray(document.getElementsByClassName('o')))) {
+    alert('you lost');
+  };
+}
+
+function gameWin(moves) {
+
+  if (moves.length >= 3) {
+    // let tilesWon = [];
+    tilesWon = [];
+    for (var i = 0, ii = moves.length; i < ii; i++) {
+      tilesWon.push(moves[i].id);
+    }
+    console.log(tilesWon);
+    if (tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-2') > -1 && tilesWon.indexOf('tile-3') > -1 || tilesWon.indexOf('tile-4') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-6') > -1 || tilesWon.indexOf('tile-7') > -1 && tilesWon.indexOf('tile-8') > -1 && tilesWon.indexOf('tile-9') > -1 || tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-9') > -1 || tilesWon.indexOf('tile-3') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-7') > -1 || tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-4') > -1 && tilesWon.indexOf('tile-7') > -1 || tilesWon.indexOf('tile-2') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-8') > -1 || tilesWon.indexOf('tile-3') > -1 && tilesWon.indexOf('tile-6') > -1 && tilesWon.indexOf('tile-9') > -1) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
 }
 
 function makeArray(r) {
