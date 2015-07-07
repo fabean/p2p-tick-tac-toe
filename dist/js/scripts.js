@@ -10,6 +10,7 @@ var peer = new Peer({ key: 'n0ei2j1souk57b9' }),
     peerId = document.getElementById('friends-peer-id'),
     connectedEl = document.getElementById('connected'),
     gameTile = makeArray(document.getElementsByClassName('tile')),
+    gameBoard = document.getElementById('game'),
     playerconnection = undefined,
     name = undefined;
 
@@ -107,21 +108,31 @@ function renderData(data, who) {
 for (var i = 0, ii = gameTile.length; i < ii; i++) {
   gameTile[i].addEventListener('click', function (e) {
     console.log(e.target.id);
-    sendMove(e.target.id);
+    if (!e.target.classList.contains('disabled') && !game.classList.contains('disabled')) {
+      sendMove(e.target.id);
+    } else {
+      alert('no cheating!');
+    }
   });
 }
 
 function sendMove(tile) {
+  var tileEl = document.getElementById(tile);
+  tileEl.classList.add('x');
+  tileEl.classList.add('disabled');
+  game.classList.add('disabled');
   var data = {
     'move': tile,
     'name': name
   };
   playerconnection.send(data);
-  document.getElementById(tile).classList.add('x');
 }
 
 function renderMove(data) {
-  document.getElementById(data.move).classList.add('o');
+  var tileEl = document.getElementById(data.move);
+  tileEl.classList.add('o');
+  tileEl.classList.add('disabled');
+  game.classList.remove('disabled');
 }
 
 function makeArray(r) {
