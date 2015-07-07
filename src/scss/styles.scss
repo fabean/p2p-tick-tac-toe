@@ -1,0 +1,44 @@
+.hide {
+  display: none;
+}
+
+#game {
+  display: flex;
+  flex-flow: row wrap;
+  height: 200px;
+  width: 200px;
+
+  .tile {
+    border: 1px solid black;
+    cursor: pointer;
+    display: flex;
+    flex: 1 30%;
+    transition: background-color 300ms ease;
+
+    &:hover {
+      background-color: rgba(0,0,0,.1);
+    }
+
+    &.x,
+    &.o {
+      cursor: default;
+
+      &:after {
+        font-size: 50px;
+        line-height: 0;
+        margin: auto;
+      }
+
+      &:hover {
+        background-color: #FFF;
+      }
+    }
+
+    &.x:after {
+      content: 'x';
+    }
+    &.o:after {
+      content: 'o';
+    }
+  }
+}

@@ -1,0 +1,65 @@
+doctype html
+html
+  head
+    title
+      | WebRTC P2P Tic Tac Toe
+    script(src="http://cdn.peerjs.com/0.3/peer.min.js")
+    link(rel='stylesheet', href='https://s3-us-west-2.amazonaws.com/s.cdpn.io/104946/animate.min.css')
+    link(rel='stylesheet', href='css/styles.css')
+    
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+      
+    meta(name='description', content="WebRTC P2P Tic Tac Toe")
+    meta(name='author', content='Josh Fabean')
+    meta(name='keywords', content='p2p,webrtc,tic tac toe,game,gaming,html5 gaming')
+      
+    meta(property='og:title', content='P2P Chat')
+    meta(property='og:type', content='website')
+    meta(property='og:url', content='http://joshfabean.com/demos/javascript-p2p-chat/index.html')
+    meta(property='og:description', content='WebRTC P2P Tic Tac Toe')
+    meta(name='twitter:card', content='summary')
+    meta(name='twitter:url', content='http://joshfabean.com/demos/javascript-p2p-chat/index.html')
+    meta(name='twitter:title', content='WebRTC P2P Chat')
+    meta(name='twitter:description', content='WebRTC P2P Tic Tac Toe')
+    meta(name='twitter:site', content='@joshfabean')
+    meta(name='twitter:creator', content='@joshfabean')
+  body
+    header.top
+      #init-wrapper
+        input#name-input(type="text", placeholder="Your name")
+        button#set-name.red.ghost(type="button")
+          | Set Name
+        button#show-host.hide.inline-block.red.ghost
+          | Host Game
+        #host.hide.inline-block
+          #your-id
+            span
+              | your id is:
+        button#show-join.hide.inline-block.red.ghost
+          | Join Game
+        #join.hide.inline-block
+          form
+            label(for="id")
+              | Friends ID:
+            input#friends-peer-id(name="id", type="text")
+            button#join-host.red.ghost(type="button")
+              | join
+      #connected.hide
+    section.inner
+      #chat-history.chat-wrapper.content
+      #game
+        #tile-1.tile
+        #tile-2.tile
+        #tile-3.tile
+        #tile-4.tile
+        #tile-5.tile
+        #tile-6.tile
+        #tile-7.tile
+        #tile-8.tile
+        #tile-9.tile
+    footer#new-chat.bottom-bar.bottom
+      textarea#message.input(type="text")
+      button.send(id="send-message", type="button")
+    script(src="js/scripts.js")
