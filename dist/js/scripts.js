@@ -116,7 +116,7 @@ function gameWin(moves) {
 
   if (moves.length >= 3) {
     // let tilesWon = [];
-    tilesWon = [];
+    var tilesWon = [];
     for (var i = 0, ii = moves.length; i < ii; i++) {
       tilesWon.push(moves[i].id);
     }
