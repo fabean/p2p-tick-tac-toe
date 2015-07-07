@@ -18,6 +18,7 @@ peer.on('open', function(id) {
 });
 
 peer.on('connection', function(playerconnection, name){
+  gameBoard.classList.remove('disabled');
   connectBack(playerconnection.peer);
   playerconnection.on('open', function(){
     renderConnectedTo(playerconnection.peer);
@@ -25,9 +26,7 @@ peer.on('connection', function(playerconnection, name){
     playerconnection.on('data', function(data){
       renderMove(data, 'them');
     });
-
   });
-
 });
 
 function renderConnectedTo(peer) {
@@ -79,10 +78,7 @@ for (let i=0, ii=gameTile.length; i<ii; i++) {
     console.log(e.target.id);
     if (!e.target.classList.contains('disabled') && !game.classList.contains('disabled')) {
       sendMove(e.target.id);
-    } else {
-      alert('no cheating!');
     }
-
   });
 }
 
