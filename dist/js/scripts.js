@@ -98,7 +98,7 @@ peerId.addEventListener('keydown', function (e) {
     e.preventDefault();
     yourMove = false;
     isHost = false;
-    landline = peer.connect(peerId.value);
+    playerconnection = peer.connect(peerId.value);
     document.getElementById('join').classList.toggle('hide');
   }
 });
@@ -147,7 +147,7 @@ function sendMove(move) {
     'name': name
   };
   playerconnection.send(data);
-  if (gameWin(makeArray(document.getElementsByClassName(markerMe())))) {
+  if (gameWin(move.board, makeArray(document.getElementsByClassName(markerMe())), markerMe())) {
     outputEl.innerHTML = 'You Won!';
     restartButton.classList.remove('hide');
   } else {
@@ -161,9 +161,8 @@ function renderMove(data) {
     renderConnectedTo(data.name);
   }
   var tileEl = document.querySelectorAll('[data-board="' + data.board + '"][data-tile="' + data.tile + '"]');
-  tileEl[0].classList.add(markerThem());
   tileEl[0].dataset.disabled = 'true';
-  tileEl.classList.add(markerThem());
+  tileEl[0].classList.add(markerThem());
 
   game.dataset.disabled = 'false';
   if (gameWin(makeArray(document.getElementsByClassName(markerThem())))) {
@@ -174,25 +173,27 @@ function renderMove(data) {
   }
 }
 
-function gameWin(moves) {
-
-  if (moves.length >= 3) {
+function gameWin(board, moves, marker) {
+  console.log('in gameWin');
+  var calcMoves = document.querySelectorAll('[data-board="' + board + '"].' + marker);
+  console.log(calcMoves);
+  if (calcMoves.length >= 3) {
     // let tilesWon = [];
     var tilesWon = [];
-    for (var i = 0, ii = moves.length; i < ii; i++) {
-      tilesWon.push(moves[i].id);
+    for (var i = 0, ii = calcMoves.length; i < ii; i++) {
+      tilesWon.push(moves[i].dataset.tile);
     }
     console.log(tilesWon);
-    if (tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-2') > -1 && tilesWon.indexOf('tile-3') > -1 || tilesWon.indexOf('tile-4') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-6') > -1 || tilesWon.indexOf('tile-7') > -1 && tilesWon.indexOf('tile-8') > -1 && tilesWon.indexOf('tile-9') > -1 || tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-9') > -1 || tilesWon.indexOf('tile-3') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-7') > -1 || tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-4') > -1 && tilesWon.indexOf('tile-7') > -1 || tilesWon.indexOf('tile-2') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-8') > -1 || tilesWon.indexOf('tile-3') > -1 && tilesWon.indexOf('tile-6') > -1 && tilesWon.indexOf('tile-9') > -1) {
+    if (tilesWon.indexOf('1') > -1 && tilesWon.indexOf('2') > -1 && tilesWon.indexOf('3') > -1 || tilesWon.indexOf('4') > -1 && tilesWon.indexOf('5') > -1 && tilesWon.indexOf('6') > -1 || tilesWon.indexOf('7') > -1 && tilesWon.indexOf('8') > -1 && tilesWon.indexOf('9') > -1 || tilesWon.indexOf('1') > -1 && tilesWon.indexOf('5') > -1 && tilesWon.indexOf('9') > -1 || tilesWon.indexOf('3') > -1 && tilesWon.indexOf('5') > -1 && tilesWon.indexOf('7') > -1 || tilesWon.indexOf('1') > -1 && tilesWon.indexOf('4') > -1 && tilesWon.indexOf('7') > -1 || tilesWon.indexOf('2') > -1 && tilesWon.indexOf('5') > -1 && tilesWon.indexOf('8') > -1 || tilesWon.indexOf('3') > -1 && tilesWon.indexOf('6') > -1 && tilesWon.indexOf('9') > -1) {
       return true;
     } else {
-      if (document.getElementsByClassName('tile disabled').length == 9) {
-        outputEl.innerHTML = 'Tie Game';
-        game.classList.add('disabled');
-        restartButton.classList.remove('hide');
-      } else {
-        return false;
-      }
+      // if (document.getElementsByClassName('tile disabled').length == 9) {
+      //   outputEl.innerHTML = 'Tie Game';
+      //   game.dataset.disabled = 'true';
+      //   restartButton.classList.remove('hide');
+      // } else {
+      return false;
+      // }
     }
   } else {
     return false;
@@ -202,10 +203,10 @@ function gameWin(moves) {
 function myMove() {
   if (yourMove) {
     outputEl.innerHTML = 'Your Move';
-    game.classList.remove('disabled');
+    game.dataset.disabled = 'false';
   } else {
     outputEl.innerHTML = 'Opponent Move';
-    game.classList.add('disabled');
+    game.dataset.disabled = 'true';
   }
 }
 
@@ -230,7 +231,7 @@ function restart() {
   // for each tile remove letters
   for (var i = 0, ii = gameTile.length; i < ii; i++) {
     console.log(i, ii);
-    gameTile[i].classList.remove('disabled');
+    gameTile[i].dataset.disabled = 'false';
     gameTile[i].classList.remove('x');
     gameTile[i].classList.remove('o');
     console.log('removing tiles');
