@@ -15,7 +15,9 @@ peer = new Peer({ host: '52.25.18.170', port: 9000, path: '/myapp' }),
     playerconnection = undefined,
     name = undefined;
 
-// peer stuff
+/**
+  * Peerjs setup stuff
+  */
 peer.on('open', function (id) {
   document.getElementById('your-id').innerHTML = '<span>Your id is: <kbd>' + id + '</kbd></span>';
 });
@@ -48,21 +50,22 @@ function connectBack(id) {
   }
 }
 
-// set name events / functions
+/**
+  * Setup things (name, join host whatevs)
+  */
 setNameButton.addEventListener('click', function () {
   setName();
 });
 
-function setName() {
-  var nameInput = document.getElementById('name-input');
-  name = nameInput.value;
-  nameInput.classList.add('hide');
-  setNameButton.classList.add('hide');
-  showHostButton.classList.remove('hide');
-  showJoinButton.classList.remove('hide');
-}
+nameEl.addEventListener('keydown', function (e) {
+  var key = e.which || e.keyCode;
+  if (key === 13) {
+    // enter key
+    e.preventDefault();
+    setName();
+  }
+});
 
-// host / join
 showHostButton.addEventListener('click', function () {
   document.getElementById('host').classList.toggle('hide');
 });
@@ -76,6 +79,28 @@ joinHostButton.addEventListener('click', function () {
   document.getElementById('join').classList.toggle('hide');
 });
 
+peerId.addEventListener('keydown', function (e) {
+  var key = e.which || e.keyCode;
+  if (key === 13) {
+    // enter key
+    e.preventDefault();
+    landline = peer.connect(peerId.value);
+    document.getElementById('join').classList.toggle('hide');
+  }
+});
+
+function setName() {
+  var nameInput = document.getElementById('name-input');
+  name = nameInput.value;
+  nameInput.classList.add('hide');
+  setNameButton.classList.add('hide');
+  showHostButton.classList.remove('hide');
+  showJoinButton.classList.remove('hide');
+}
+
+/**
+  * Gameplay section
+  */
 for (var i = 0, ii = gameTile.length; i < ii; i++) {
   gameTile[i].addEventListener('click', function (e) {
     console.log(e.target.id);
@@ -132,6 +157,9 @@ function gameWin(moves) {
   }
 }
 
+/**
+  * My fancy makeArray helper function
+  */
 function makeArray(r) {
   return [].slice.call(r, 0);
 }
