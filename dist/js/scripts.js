@@ -1,9 +1,10 @@
 /* jshint ignore:start */
 'use strict';
 
-var //peer = new Peer({key: 'n0ei2j1souk57b9'}),
-peer = new Peer({ host: '52.25.18.170', port: 9000, path: '/myapp' }),
-    nameEl = document.getElementById('name-input'),
+var peer = new Peer({ key: 'n0ei2j1souk57b9' }),
+
+//peer = new Peer({host: '52.25.18.170', port: 9000, path: '/myapp'}),
+nameEl = document.getElementById('name-input'),
     setNameButton = document.getElementById('set-name'),
     showHostButton = document.getElementById('show-host'),
     showJoinButton = document.getElementById('show-join'),
@@ -12,6 +13,10 @@ peer = new Peer({ host: '52.25.18.170', port: 9000, path: '/myapp' }),
     connectedEl = document.getElementById('connected'),
     gameTile = makeArray(document.getElementsByClassName('tile')),
     gameBoard = document.getElementById('game'),
+    outputEl = document.getElementById('output'),
+    restartButton = document.getElementById('restart'),
+    yourMove = true,
+    isHost = true,
     playerconnection = undefined,
     name = undefined;
 
@@ -29,9 +34,14 @@ peer.on('connection', function (playerconnection, name) {
     renderConnectedTo(playerconnection.peer);
 
     playerconnection.on('data', function (data) {
-      renderMove(data, 'them');
+      if (data.move === 'restart' && data.name !== name) {
+        restart();
+      } else {
+        renderMove(data, 'them');
+      }
     });
   });
+  myMove();
 });
 
 function renderConnectedTo(peer) {
@@ -42,12 +52,11 @@ function renderConnectedTo(peer) {
 
 function connectBack(id) {
   // recieve a connection and connect back
-  console.log(playerconnection);
   if (typeof playerconnection === 'undefined') {
     // we need to connect back;
     playerconnection = peer.connect(id);
-    console.log('connecting again');
   }
+  myMove();
 }
 
 /**
@@ -75,6 +84,8 @@ showJoinButton.addEventListener('click', function () {
 });
 
 joinHostButton.addEventListener('click', function () {
+  yourMove = false;
+  isHost = false;
   playerconnection = peer.connect(peerId.value);
   document.getElementById('join').classList.toggle('hide');
 });
@@ -84,6 +95,8 @@ peerId.addEventListener('keydown', function (e) {
   if (key === 13) {
     // enter key
     e.preventDefault();
+    yourMove = false;
+    isHost = false;
     landline = peer.connect(peerId.value);
     document.getElementById('join').classList.toggle('hide');
   }
@@ -102,6 +115,7 @@ function setName() {
   * Gameplay section
   */
 for (var i = 0, ii = gameTile.length; i < ii; i++) {
+  console.log('in loop!');
   gameTile[i].addEventListener('click', function (e) {
     console.log(e.target.id);
     if (!e.target.classList.contains('disabled') && !game.classList.contains('disabled')) {
@@ -110,9 +124,20 @@ for (var i = 0, ii = gameTile.length; i < ii; i++) {
   });
 }
 
+restartButton.addEventListener('click', function (e) {
+  e.preventDefault();
+  var data = {
+    'move': 'restart',
+    'name': name
+  };
+  playerconnection.send(data);
+  restart();
+});
+
 function sendMove(tile) {
+  yourMove = false;
   var tileEl = document.getElementById(tile);
-  tileEl.classList.add('x');
+  tileEl.classList.add(markerMe());
   tileEl.classList.add('disabled');
   game.classList.add('disabled');
   var data = {
@@ -120,22 +145,29 @@ function sendMove(tile) {
     'name': name
   };
   playerconnection.send(data);
-  if (gameWin(makeArray(document.getElementsByClassName('x')))) {
-    alert('you won');
-  };
+  if (gameWin(makeArray(document.getElementsByClassName(markerMe())))) {
+    outputEl.innerHTML = 'You Won!';
+    restartButton.classList.remove('hide');
+  } else {
+    myMove();
+  }
 }
 
 function renderMove(data) {
+  yourMove = true;
   if (document.getElementById('friendID').innerHTML !== data.name) {
     renderConnectedTo(data.name);
   }
   var tileEl = document.getElementById(data.move);
-  tileEl.classList.add('o');
+  tileEl.classList.add(markerThem());
   tileEl.classList.add('disabled');
   game.classList.remove('disabled');
-  if (gameWin(makeArray(document.getElementsByClassName('o')))) {
-    alert('you lost');
-  };
+  if (gameWin(makeArray(document.getElementsByClassName(markerThem())))) {
+    outputEl.innerHTML = 'You Lost...';
+    restartButton.classList.remove('hide');
+  } else {
+    myMove();
+  }
 }
 
 function gameWin(moves) {
@@ -150,11 +182,65 @@ function gameWin(moves) {
     if (tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-2') > -1 && tilesWon.indexOf('tile-3') > -1 || tilesWon.indexOf('tile-4') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-6') > -1 || tilesWon.indexOf('tile-7') > -1 && tilesWon.indexOf('tile-8') > -1 && tilesWon.indexOf('tile-9') > -1 || tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-9') > -1 || tilesWon.indexOf('tile-3') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-7') > -1 || tilesWon.indexOf('tile-1') > -1 && tilesWon.indexOf('tile-4') > -1 && tilesWon.indexOf('tile-7') > -1 || tilesWon.indexOf('tile-2') > -1 && tilesWon.indexOf('tile-5') > -1 && tilesWon.indexOf('tile-8') > -1 || tilesWon.indexOf('tile-3') > -1 && tilesWon.indexOf('tile-6') > -1 && tilesWon.indexOf('tile-9') > -1) {
       return true;
     } else {
-      return false;
+      if (document.getElementsByClassName('tile disabled').length == 9) {
+        outputEl.innerHTML = 'Tie Game';
+        game.classList.add('disabled');
+        restartButton.classList.remove('hide');
+      } else {
+        return false;
+      }
     }
   } else {
     return false;
   }
+}
+
+function myMove() {
+  if (yourMove) {
+    outputEl.innerHTML = 'Your Move';
+    game.classList.remove('disabled');
+  } else {
+    outputEl.innerHTML = 'Opponent Move';
+    game.classList.add('disabled');
+  }
+}
+
+function markerMe() {
+  if (isHost) {
+    return 'x';
+  } else {
+    return 'o';
+  }
+}
+
+function markerThem() {
+  if (isHost) {
+    return 'o';
+  } else {
+    return 'x';
+  }
+}
+
+function restart() {
+  console.log('in restart');
+  // for each tile remove letters
+  for (var i = 0, ii = gameTile.length; i < ii; i++) {
+    console.log(i, ii);
+    gameTile[i].classList.remove('disabled');
+    gameTile[i].classList.remove('x');
+    gameTile[i].classList.remove('o');
+    console.log('removing tiles');
+  }
+
+  // disable game for host now
+  if (isHost) {
+    yourMove = false;
+  } else {
+    yourMove = true;
+  }
+  myMove();
+
+  restartButton.classList.add('hide');
 }
 
 /**
