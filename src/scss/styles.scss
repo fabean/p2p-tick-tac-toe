@@ -58,9 +58,17 @@ body {
 #game {
   display: flex;
   flex-flow: row wrap;
-  height: 200px;
-  width: 200px;
+  height: 300px;
+  width: 300px;
   margin: 50px auto;
+
+  .board {
+    border: 1px solid black;
+    display: flex;
+    flex-flow: row wrap;
+    height: 33%;
+    width: 33%;
+  }
 
   .tile {
     border: 1px solid black;

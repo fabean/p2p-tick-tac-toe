@@ -52,13 +52,8 @@ html
       button#restart.hide(type="button")
         | Restart
       #game.disabled
-        #tile-1.tile
-        #tile-2.tile
-        #tile-3.tile
-        #tile-4.tile
-        #tile-5.tile
-        #tile-6.tile
-        #tile-7.tile
-        #tile-8.tile
-        #tile-9.tile
+        each boardval in [1,2,3,4,5,6,7,8,9]
+          div(id="board-#{boardval}").board
+            each tileval in [1,2,3,4,5,6,7,8,9]
+              .tile(data-board=boardval, data-tile=tileval)
     script(src="js/scripts.js")
