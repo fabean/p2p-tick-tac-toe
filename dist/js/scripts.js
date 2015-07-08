@@ -12,7 +12,8 @@ nameEl = document.getElementById('name-input'),
     peerId = document.getElementById('friends-peer-id'),
     connectedEl = document.getElementById('connected'),
     gameTile = makeArray(document.getElementsByClassName('tile')),
-    gameBoard = document.getElementById('game'),
+    gameBoard = makeArray(document.getElementsByClassName('board')),
+    game = document.getElementById('game'),
     outputEl = document.getElementById('output'),
     restartButton = document.getElementById('restart'),
     yourMove = true,
@@ -28,13 +29,13 @@ peer.on('open', function (id) {
 });
 
 peer.on('connection', function (playerconnection, name) {
-  gameBoard.classList.remove('disabled');
+  game.dataset.disabled = 'false';
   connectBack(playerconnection.peer);
   playerconnection.on('open', function () {
     renderConnectedTo(playerconnection.peer);
 
     playerconnection.on('data', function (data) {
-      if (data.move === 'restart' && data.name !== name) {
+      if (data.board === 'restart' && data.tile === 'restart' && data.name !== name) {
         restart();
       } else {
         renderMove(data, 'them');
@@ -117,9 +118,9 @@ function setName() {
 for (var i = 0, ii = gameTile.length; i < ii; i++) {
   console.log('in loop!');
   gameTile[i].addEventListener('click', function (e) {
-    console.log(e.target.id);
-    if (!e.target.classList.contains('disabled') && !game.classList.contains('disabled')) {
-      sendMove(e.target.id);
+    if (e.target.dataset.disabled === 'false' && game.dataset.disabled === 'false') {
+      console.log(e.target.dataset);
+      sendMove(e.target.dataset);
     }
   });
 }
@@ -134,14 +135,15 @@ restartButton.addEventListener('click', function (e) {
   restart();
 });
 
-function sendMove(tile) {
+function sendMove(move) {
   yourMove = false;
-  var tileEl = document.getElementById(tile);
-  tileEl.classList.add(markerMe());
-  tileEl.classList.add('disabled');
-  game.classList.add('disabled');
+  var tileEl = document.querySelectorAll('[data-board="' + move.board + '"][data-tile="' + move.tile + '"]');
+  tileEl[0].classList.add(markerMe());
+  tileEl[0].dataset.disabled = 'true';
+  game.dataset.disabled = 'true';
   var data = {
-    'move': tile,
+    'board': move.board,
+    'tile': move.tile,
     'name': name
   };
   playerconnection.send(data);
@@ -158,10 +160,12 @@ function renderMove(data) {
   if (document.getElementById('friendID').innerHTML !== data.name) {
     renderConnectedTo(data.name);
   }
-  var tileEl = document.getElementById(data.move);
+  var tileEl = document.querySelectorAll('[data-board="' + data.board + '"][data-tile="' + data.tile + '"]');
+  tileEl[0].classList.add(markerThem());
+  tileEl[0].dataset.disabled = 'true';
   tileEl.classList.add(markerThem());
-  tileEl.classList.add('disabled');
-  game.classList.remove('disabled');
+
+  game.dataset.disabled = 'false';
   if (gameWin(makeArray(document.getElementsByClassName(markerThem())))) {
     outputEl.innerHTML = 'You Lost...';
     restartButton.classList.remove('hide');
