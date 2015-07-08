@@ -29,22 +29,22 @@ html
     header.top
       #init-wrapper
         input#name-input(type="text", placeholder="Your name")
-        button#set-name.red.ghost(type="button")
+        button#set-name.blue.ghost(type="button")
           | Set Name
-        button#show-host.hide.inline-block.red.ghost
+        button#show-host.hide.inline-block.blue.ghost
           | Host Game
         #host.hide.inline-block
           #your-id
             span
               | your id is:
-        button#show-join.hide.inline-block.red.ghost
+        button#show-join.hide.inline-block.blue.ghost
           | Join Game
         #join.hide.inline-block
           form
             label(for="id")
               | Friends ID:
             input#friends-peer-id(name="id", type="text")
-            button#join-host.red.ghost(type="button")
+            button#join-host.blue.ghost(type="button")
               | join
       #connected.hide
     section.inner

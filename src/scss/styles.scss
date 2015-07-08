@@ -1,5 +1,54 @@
-.hide {
-  display: none;
+@import 'normalize';
+
+$blue: #2196F3;
+$dingy: #495B6A;
+$white: #ffffff;
+$purple: #673AB7;
+$yellow: #FFEB3B;
+$red: #F44336;
+$orange: #FF5722;
+$black: #333333;
+
+$nav: 100;
+$navHeight: 64px;
+$trans: 0.3s ease;
+
+$z10:  0px 3px 3px 0px rgba(50, 50, 50, 0.1);
+$z50:  0px 4px 3px 0px rgba(50, 50, 50, 0.2);
+$z100: 0px 5px 3px 0px rgba(50, 50, 50, 0.3);
+$inktrans: 0.2;
+$darkred: #d32f2f;
+$inkred: transparentize(#b71c1c, $inktrans);
+
+$ghost:    transparent;
+
+html {
+  box-sizing: border-box;
+
+  * {
+    box-sizing: inherit;
+  }
+}
+
+body {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.inner {
+  display: flex;
+  min-height: 100vh;
+}
+
+.name {
+  text-align: center;
+  padding-top: 11px;
+}
+
+.top {
+  background: $blue;
+  padding: 20px;
+  color: $white;
 }
 
 #game {
@@ -7,6 +56,7 @@
   flex-flow: row wrap;
   height: 200px;
   width: 200px;
+  margin: auto;
 
   .tile {
     border: 1px solid black;
@@ -41,4 +91,56 @@
       content: 'o';
     }
   }
+}
+
+input {
+  color: #999999;
+}
+
+button {
+  text-decoration: none;
+  color: $white;
+  border-radius: 1px;
+  background-color: $blue;
+  border: none;
+  -webkit-box-shadow: $z10;
+  -moz-box-shadow:    $z10;
+  box-shadow:         $z10;
+  display: inline-block;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+
+  &:hover {
+    background-color: darken($blue, 5%);
+    -webkit-box-shadow: $z100;
+    -moz-box-shadow:    $z100;
+    box-shadow:         $z100;
+    cursor: pointer;
+
+    -webkit-transition: $trans;
+    transition: $trans;
+  }
+
+  &.blue {
+    background-color: $white;
+    color: $blue;
+
+    &:active, &:focus {
+      background-color: darken($white, 5%);
+    }
+
+    &:hover {
+      background-color: darken($white, 5%);
+    }
+  }
+}
+
+.hide {
+  display: none !important;
+}
+
+.inline-block {
+  display: inline-block;
 }

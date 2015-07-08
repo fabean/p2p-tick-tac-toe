@@ -1,5 +1,6 @@
 /* jshint ignore:start */
-let peer = new Peer({key: 'n0ei2j1souk57b9'}),
+let //peer = new Peer({key: 'n0ei2j1souk57b9'}),
+    peer = new Peer({host: '52.25.18.170', port: 9000, path: '/myapp'}),
     nameEl = document.getElementById('name-input'),
     setNameButton = document.getElementById('set-name'),
     showHostButton = document.getElementById('show-host'),
